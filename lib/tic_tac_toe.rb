@@ -1,3 +1,5 @@
+require 'pry'
+
 class TicTacToe
     def initialize
         @board = Array.new(9, " ")
@@ -40,12 +42,10 @@ class TicTacToe
     end 
 
     def valid_move?(board_num)
-        if board_num > 8 || board_num < 0
-            false
-        elsif position_taken?(board_num) == true
-            false
-        else
+        if board_num.between?(0, 8) && self.position_taken?(board_num) == false
             true
+        else
+            false
         end
     end
 
@@ -58,6 +58,7 @@ class TicTacToe
                 turn
             end
         end
+        binding.pry
         turn
     end 
 
@@ -74,8 +75,7 @@ class TicTacToe
         user_move = gets.chomp.to_i
         translated_move = input_to_index(user_move)
         if valid_move?(translated_move)
-            move(translated_move)
-            current_player
+            move(translated_move, current_player)
             display_board
         else
             puts "invalid"
@@ -84,76 +84,30 @@ class TicTacToe
     end
 
     def won?
-        if @board[0] == "X" && @board[1] == "X" && @board[2] == "X"
-            WIN_COMBINATIONS[0]
-        elsif @board[3] == "X" && @board[4] == "X" && @board[5] == "X"
-            WIN_COMBINATIONS[1]
-        elsif @board[6] == "X" && @board[7] == "X" && @board[8] == "X"
-            WIN_COMBINATIONS[2]
-        elsif @board[0] == "X" && @board[3] == "X" && @board[6] == "X"
-            WIN_COMBINATIONS[3]
-        elsif @board[1] == "X" && @board[4] == "X" && @board[7] == "X"
-            WIN_COMBINATIONS[4]
-        elsif @board[2] == "X" && @board[5] == "X" && @board[8] == "X"
-            WIN_COMBINATIONS[5]
-        elsif @board[0] == "X" && @board[4] == "X" && @board[8] == "X"
-            WIN_COMBINATIONS[6]
-        elsif @board[2] == "X" && @board[4] == "X" && @board[6] == "X"
-            WIN_COMBINATIONS[7]
-        elsif @board[0] == "O" && @board[1] == "O" && @board[2] == "O"
-                WIN_COMBINATIONS[0]
-        elsif @board[3] == "O" && @board[4] == "O" && @board[5] == "O"
-                WIN_COMBINATIONS[1]
-        elsif @board[6] == "O" && @board[7] == "O" && @board[8] == "O"
-                WIN_COMBINATIONS[2]
-        elsif @board[0] == "O" && @board[3] == "O" && @board[6] == "O"
-                WIN_COMBINATIONS[3]
-        elsif @board[1] == "O" && @board[4] == "O" && @board[7] == "O"
-                WIN_COMBINATIONS[4]
-        elsif @board[2] == "O" && @board[5] == "O" && @board[8] == "O"
-                WIN_COMBINATIONS[5]
-        elsif @board[0] == "O" && @board[4] == "O" && @board[8] == "O"
-                WIN_COMBINATIONS[6]
-        elsif @board[2] == "O" && @board[4] == "O" && @board[6] == "0"
-                WIN_COMBINATIONS[7]
-        else
-            false
+        WIN_COMBINATIONS.any? do |win_combo|
+            if self.position_taken?(win_combo[0]) == true && @board[win_combo[1]] == @board[win_combo[1]] && @board[win_combo[1]] == @board[win_combo[2]]
+                return win_combo
+            end
         end
     end
 
     def full?
-        empty_count = 0
-        @board.each do |place|
-            if place == " "
-                empty_count += 1
-            else
-                empty_count
-            end
-        end
-
-        if empty_count == 0
-            true
-        else
-            false
+        @board.all? do |place|
+            place != " "
         end
     end
 
     def draw?
         if self.full? == true && self.won? == false
             true
-        else
-            false
         end
     end
 
     def over?
-        if self.draw? == true
+        if self.won? == true || self.draw? == true
             true
-        elsif self.won?.class == Array
-            true
-        else
-            false
         end
+        false
     end
 
     def winner
@@ -179,20 +133,17 @@ class TicTacToe
         
     end
 
-    def play 
-        until self.over? == true do 
-            self.turn
-            self.over?
-        end
+    # def play 
+    #     self.turn until self.over? == true
     
-        if self.won?.class == Array
-            winner = self.winner
-            puts "Congratulations #{winner}!"
-        elsif self.draw? == true
-            puts "Cat's Game!"
-        end
+    #     if self.won?.class == Array
+    #         winner = self.winner
+    #         puts "Congratulations #{winner}!"
+    #     elsif self.draw? == true
+    #         puts "Cat's Game!"
+    #     end
 
-    end
+    # end
          
 
 
