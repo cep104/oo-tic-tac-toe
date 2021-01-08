@@ -58,7 +58,7 @@ class TicTacToe
                 turn
             end
         end
-        binding.pry
+        # binding.pry
         turn
     end 
 
@@ -71,21 +71,35 @@ class TicTacToe
         end
     end
 
-    def turn
-        user_move = gets.chomp.to_i
-        translated_move = input_to_index(user_move)
-        if valid_move?(translated_move)
-            move(translated_move, current_player)
+    # def turn
+    #     user_move = gets.chomp.to_i
+    #     translated_move = input_to_index(user_move)
+    #     if valid_move?(translated_move)
+    #         move(translated_move, current_player)
+    #         display_board
+    #     else
+    #         puts "invalid"
+    #         turn
+    #     end
+    # end
+    def turn 
+        
+        choice = gets.chomp.to_i
+        
+        position = input_to_index(choice)
+        if valid_move?(position)
+            #player_token = current_player
+            move(position, current_player)
             display_board
         else
-            puts "invalid"
             turn
         end
-    end
+       
+    end 
 
     def won?
         WIN_COMBINATIONS.any? do |win_combo|
-            if self.position_taken?(win_combo[0]) == true && @board[win_combo[1]] == @board[win_combo[1]] && @board[win_combo[1]] == @board[win_combo[2]]
+            if self.position_taken?(win_combo[0]) == true && @board[win_combo[0]] == @board[win_combo[1]] && @board[win_combo[1]] == @board[win_combo[2]]
                 return win_combo
             end
         end
@@ -104,11 +118,8 @@ class TicTacToe
     end
 
     def over?
-        if self.won? == true || self.draw? == true
-            true
-        end
-        false
-    end
+        won? || draw?
+      end
 
     def winner
         if self.won?.class == Array
@@ -144,7 +155,10 @@ class TicTacToe
     #     end
 
     # end
-         
+    def play
+        turn until over?
+        puts winner ? "Congratulations #{winner}!" : "Cat's Game!"
+      end
 
 
 end
